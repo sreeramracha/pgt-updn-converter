@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { XMLParser } from "fast-xml-parser";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Column(props) {
 	const [clientMessageName, setClientMessageName] = useState("");
-	const [version, setVersion] = useState();
+	const [version, setVersion] = useState("");
 
 	useEffect(() => {
 		const content = props.archiveFile.fileHeader.split("\n");
@@ -26,13 +29,27 @@ export default function Column(props) {
 				setClientMessageName(name);
 			}
 		}
+
+		if (props.archiveFile.fileBody.length > 0) {
+			// const parser = new XMLParser();
+			// const result = parser.parse(props.archiveFile.fileBody);
+			// setVersion(result.Envelope.Body.ExportData.Version);
+			const match = props.archiveFile.fileBody.match(
+				/<Version>(.*?)<\/Version>/
+			);
+
+			setVersion(match[1]);
+		}
 	}, [props.archiveFile]);
 
 	return (
 		<>
 			<div className="column-display">
 				<div className="column-tables"></div>
-				<div className="column-header-data"></div>
+				<div className="column-header-data">
+					{version}
+					{/* {props.archiveFile.fileBody} */}
+				</div>
 			</div>
 		</>
 	);

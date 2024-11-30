@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../styles/input.css";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Input(props) {
@@ -38,6 +38,7 @@ export default function Input(props) {
 					name=""
 					id=""
 					value={props.archiveFile.fileName}
+					readOnly={true}
 				></textarea>
 				<input type="file" name="" id="" onChange={handleFile} />
 			</div>
