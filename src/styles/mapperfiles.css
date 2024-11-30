@@ -1,0 +1,15 @@
+.App {
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	font-size: larger;
+}
+
+.App > p {
+	margin: 0.5em;
+	margin-right: 8em;
+}
+
+.App > input {
+	font-size: medium;
+}
