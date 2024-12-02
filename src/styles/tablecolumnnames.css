@@ -19,15 +19,15 @@ td {
 }
 
 th:nth-child(1) {
-	width: 20em;
+	width: 15em;
 }
 
 th:nth-child(2) {
-	width: 20em;
+	width: 10em;
 }
 
 th:nth-child(3) {
-	width: 20em;
+	width: 10em;
 }
 
 td:nth-child(1) {

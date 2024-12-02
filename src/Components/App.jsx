@@ -18,21 +18,8 @@ function App() {
 
 	function handleArchiveFile(item) {
 		setArchiveFile(item);
+		setArchiveFileData([]);
 	}
-
-	// function handleSortArchiveFileData() {
-	// 	console.log("In sort");
-
-	// 	const sortedArchiveFileData = [...archiveFileData].sort((a, b) =>
-	// 		a.tableName.localeCompare(b.tableName)
-	// 	);
-
-	// 	sortedArchiveFileData.forEach((item) => {
-	// 		console.log(item.tableNmae);
-	// 	});
-
-	// 	setArchiveFileData(sortedArchiveFileData);
-	// }
 
 	function handleArchiveFileData(item) {
 		for (let key in item) {
@@ -49,10 +36,6 @@ function App() {
 				];
 			});
 		}
-
-		// archiveFileData.sort((a, b) => a.tableName.localeCompare(b.tableName));
-
-		// console.log(archiveFileData);
 	}
 
 	function handleFile(event) {
@@ -91,7 +74,6 @@ function App() {
 				<input type="file" onChange={handleFile} multiple />
 			</div>
 			<div className="converter">
-				{/* {console.log(archiveFile)} */}
 				<Input
 					archiveFile={archiveFile}
 					handleArchiveFile={handleArchiveFile}
@@ -106,7 +88,7 @@ function App() {
 				<Data />
 			</div>
 
-			<ToastContainer />
+			<ToastContainer position="bottom-right" />
 		</>
 	);
 }

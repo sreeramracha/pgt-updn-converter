@@ -12,6 +12,7 @@ export default function Column(props) {
 	const [xmlHeader, setXmlHeader] = useState([]);
 
 	useEffect(() => {
+		setXmlHeader([]);
 		const content = props.archiveFile.fileHeader.split("\n");
 		const messageName = content.filter((item) => {
 			return item.includes("clientMessageName");
