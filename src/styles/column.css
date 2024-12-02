@@ -1,0 +1,29 @@
+.column-display {
+	display: flex;
+	margin: 0 2em;
+}
+
+.column-tables,
+.column-header-data {
+	/* border: 1px solid; */
+	box-shadow: 5px 10px 10px 10px rgb(214, 214, 214);
+	/* overflow: scroll; */
+}
+
+.column-tables {
+	height: 20em;
+}
+
+.column-header-data {
+	height: 19em;
+}
+
+.column-header-data {
+	border: 1px solid;
+	padding: 0 1em 1em;
+	/* width: 35em; */
+}
+
+.column-header-data > p {
+	margin: 0;
+}

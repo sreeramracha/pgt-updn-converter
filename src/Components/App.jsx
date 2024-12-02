@@ -14,14 +14,45 @@ function App() {
 		fileHeader: "",
 		fileBody: "",
 	});
-	const [archiveFileData, setArchiveFileData] = useState();
+	const [archiveFileData, setArchiveFileData] = useState([]);
 
 	function handleArchiveFile(item) {
 		setArchiveFile(item);
 	}
 
+	// function handleSortArchiveFileData() {
+	// 	console.log("In sort");
+
+	// 	const sortedArchiveFileData = [...archiveFileData].sort((a, b) =>
+	// 		a.tableName.localeCompare(b.tableName)
+	// 	);
+
+	// 	sortedArchiveFileData.forEach((item) => {
+	// 		console.log(item.tableNmae);
+	// 	});
+
+	// 	setArchiveFileData(sortedArchiveFileData);
+	// }
+
 	function handleArchiveFileData(item) {
-		setArchiveFileData(item);
+		for (let key in item) {
+			// console.log(`${key}->${item[key]}`);
+			setArchiveFileData((prevValues) => {
+				return [
+					...prevValues,
+					{
+						tableName: key,
+						tableData: item[key],
+						rows: item[key].length,
+						columns: item[key][0].length,
+					},
+				];
+			});
+		}
+
+		// archiveFileData.sort((a, b) => a.tableName.localeCompare(b.tableName));
+
+		// console.log(archiveFileData);
 	}
 
 	function handleFile(event) {
@@ -70,6 +101,7 @@ function App() {
 					mapperFiles={mapperFiles}
 					archiveFileData={archiveFileData}
 					handleArchiveFileData={handleArchiveFileData}
+					// handleSortArchiveFileData={handleSortArchiveFileData}
 				/>
 				<Data />
 			</div>

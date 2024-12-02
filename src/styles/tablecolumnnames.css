@@ -1,0 +1,40 @@
+.column-tables {
+	margin: 0 1em;
+	/* padding: 0 1em; */
+}
+
+table {
+	/* width: 100%; */
+	border-collapse: collapse;
+}
+
+th {
+	border: 1px solid;
+	text-align: center;
+	/* margin: 0; */
+}
+
+td {
+	border: 1px solid;
+}
+
+th:nth-child(1) {
+	width: 20em;
+}
+
+th:nth-child(2) {
+	width: 20em;
+}
+
+th:nth-child(3) {
+	width: 20em;
+}
+
+td:nth-child(1) {
+	padding-left: 0.5em;
+}
+
+td:nth-child(2),
+td:nth-child(3) {
+	text-align: center;
+}
