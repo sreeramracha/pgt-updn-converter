@@ -7,8 +7,6 @@ import "../styles/column.css";
 import TableColumnNames from "./TableColumnNames";
 
 export default function Column(props) {
-	const [clientMessageName, setClientMessageName] = useState("");
-	const [version, setVersion] = useState("");
 	const [xmlHeader, setXmlHeader] = useState([]);
 
 	useEffect(() => {
@@ -22,7 +20,7 @@ export default function Column(props) {
 			const name = messageName[0].split("=")[1];
 			// console.log(name);
 
-			setClientMessageName(name);
+			props.handleClientMessageName(name);
 		} else {
 			const messagePIPOName = content.filter((item) => {
 				return item.includes("clientMessagePIPOName");
@@ -31,7 +29,7 @@ export default function Column(props) {
 				const name = messagePIPOName[0].split("=")[1];
 				// console.log(name);
 
-				setClientMessageName(name);
+				props.handleClientMessageName(name);
 			}
 		}
 
@@ -39,11 +37,18 @@ export default function Column(props) {
 			// const parser = new XMLParser();
 			// const result = parser.parse(props.archiveFile.fileBody);
 			// setVersion(result.Envelope.Body.ExportData.Version);
-			const match = props.archiveFile.fileBody.match(
-				/<Version>(.*?)<\/Version>/
-			);
+			try {
+				const match = props.archiveFile.fileBody.match(
+					/<Version>(.*?)<\/Version>/
+				);
 
-			setVersion(match[1]);
+				if (match[1].length <= 0) {
+					toast.error("Version not found");
+				}
+				props.handleVersion(match[1]);
+			} catch (error) {
+				toast.error("Version was not found");
+			}
 
 			try {
 				const parser = new XMLParser();
@@ -74,6 +79,7 @@ export default function Column(props) {
 				// props.handleSortArchiveFileData();
 			} catch (error) {
 				console.error("Error parsing XML:", error);
+				toast.error("Error parsing XML");
 				props.handleArchiveFileData({});
 			}
 		}
@@ -87,22 +93,12 @@ export default function Column(props) {
 	return (
 		<>
 			<div className="column-display">
-				{/* <div className="column-tables"> */}
 				<TableColumnNames archiveFileData={props.archiveFileData} />
-				{/* {props.archiveFileData.map((item) => (
-						<TableColumnNames item={item} />
-					))} */}
-				{/* </div> */}
+
 				<div className="column-header-data">
 					{xmlHeader.map((item) => (
 						<p>{item}</p>
 					))}
-
-					{/* <p>
-						{props.archiveFileData.map((item) => (
-							<Table item={item} />
-						))}
-					</p> */}
 				</div>
 			</div>
 		</>

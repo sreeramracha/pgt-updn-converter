@@ -14,7 +14,17 @@ function App() {
 		fileHeader: "",
 		fileBody: "",
 	});
+
+	const [version, setVersion] = useState("");
+	const [clientMessageName, setClientMessageName] = useState("");
 	const [archiveFileData, setArchiveFileData] = useState([]);
+
+	function handleClientMessageName(item) {
+		setClientMessageName(item);
+	}
+	function handleVersion(item) {
+		setVersion(item);
+	}
 
 	function handleArchiveFile(item) {
 		setArchiveFile(item);
@@ -83,9 +93,16 @@ function App() {
 					mapperFiles={mapperFiles}
 					archiveFileData={archiveFileData}
 					handleArchiveFileData={handleArchiveFileData}
-					// handleSortArchiveFileData={handleSortArchiveFileData}
+					handleClientMessageName={handleClientMessageName}
+					handleVersion={handleVersion}
 				/>
-				<Data />
+				<Data
+					archiveFile={archiveFile}
+					version={version}
+					clientMessageName={clientMessageName}
+					archiveFileData={archiveFileData}
+					mapperFiles={mapperFiles}
+				/>
 			</div>
 
 			<ToastContainer position="bottom-right" />
