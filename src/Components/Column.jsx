@@ -42,10 +42,10 @@ export default function Column(props) {
 					/<Version>(.*?)<\/Version>/
 				);
 
-				if (match[1].length <= 0) {
+				if (match[1].trim().length <= 0) {
 					toast.error("Version not found");
 				}
-				props.handleVersion(match[1]);
+				props.handleVersion(match[1].trim());
 			} catch (error) {
 				toast.error("Version was not found");
 			}

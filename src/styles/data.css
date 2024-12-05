@@ -1,0 +1,17 @@
+.data {
+	margin: 2em;
+	overflow: scroll;
+	width: 110em;
+}
+
+.data > table {
+	/* width: 100%; */
+	border-collapse: collapse;
+}
+
+.data > th,
+.data > td {
+	border: 1px solid;
+	width: 5em;
+	overflow: hidden;
+}

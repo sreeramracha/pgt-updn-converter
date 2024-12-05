@@ -1,17 +1,17 @@
 .column-tables {
 	margin: 0 1em;
-	/* padding: 0 1em; */
+	/* padding: 0; */
 }
 
 table {
 	/* width: 100%; */
 	border-collapse: collapse;
+	padding: 0;
 }
 
 th {
 	border: 1px solid;
 	text-align: center;
-	/* margin: 0; */
 }
 
 td {

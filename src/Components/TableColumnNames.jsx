@@ -18,7 +18,7 @@ export default function TableColumnNames(props) {
 					</thead>
 					<tbody>
 						{sortedData.map((item) => (
-							<tr>
+							<tr onClick={props.handleTableSelection}>
 								<td>{item.tableName}</td>
 								<td>{item.columns}</td>
 								<td>{item.rows}</td>

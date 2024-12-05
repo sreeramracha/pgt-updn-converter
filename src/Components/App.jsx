@@ -20,10 +20,10 @@ function App() {
 	const [archiveFileData, setArchiveFileData] = useState([]);
 
 	function handleClientMessageName(item) {
-		setClientMessageName(item);
+		setClientMessageName(item.trim());
 	}
 	function handleVersion(item) {
-		setVersion(item);
+		setVersion(item.trim());
 	}
 
 	function handleArchiveFile(item) {
