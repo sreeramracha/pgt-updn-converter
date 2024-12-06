@@ -432,7 +432,7 @@ export default function Data(props) {
 					}
 				});
 
-				console.log(indeces);
+				// console.log(indeces);
 
 				setTimeStampIndeces(indeces);
 			}
