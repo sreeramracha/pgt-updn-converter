@@ -34,7 +34,6 @@ export default function Column(props) {
 		}
 
 		if (props.archiveFile.fileBody.length > 0) {
-			setIsSelected(false);
 			setIsSelected(true);
 			// const parser = new XMLParser();
 			// const result = parser.parse(props.archiveFile.fileBody);
@@ -53,42 +52,81 @@ export default function Column(props) {
 			}
 
 			try {
-				const temp = props.archiveFile.fileBody.slice(
-					props.archiveFile.fileBody.indexOf("<MapData>"),
-					props.archiveFile.fileBody.indexOf("</MapData>") + 10
-				);
-				const parser = new XMLParser();
-				const result = parser.parse(temp);
+				if (props.archiveFile.fileBody.includes("BCPTable")) {
+					const temp = props.archiveFile.fileBody.slice(
+						props.archiveFile.fileBody.indexOf("<MapTables>"),
+						props.archiveFile.fileBody.indexOf("</MapTables>") + 10
+					);
+					const parser = new DOMParser();
+					const xmlDoc = parser.parseFromString(temp, "text/xml");
 
-				const mapData = result.MapData?.Table || [];
-				const dictionary = {};
+					const dictionary = {};
 
-				// Ensure mapData is treated as an array
-				const tables = Array.isArray(mapData) ? mapData : [mapData];
+					// Get all BCPTable nodes
+					const bcpTables = xmlDoc.getElementsByTagName("BCPTable");
 
-				tables.forEach((table) => {
-					const tableName = table.Name;
-					const rows = table.row;
+					for (const table of bcpTables) {
+						// Extract <Name> value
+						const name = table
+							.getElementsByTagName("Name")[0]
+							?.textContent.trim();
 
-					if (tableName && rows) {
-						// Ensure rows is an array
-						const rowArray = Array.isArray(rows) ? rows : [rows];
-						dictionary[tableName] = rowArray.map((row) => {
-							// Ensure <c> values are treated as an array
-							return Array.isArray(row.c) ? row.c : [row.c];
-						});
+						// Extract <BCPData> and split into lines
+						const bcpDataContent = table
+							.getElementsByTagName("BCPData")[0]
+							?.textContent.trim();
+						const bcpDataArray = bcpDataContent
+							.split("\n") // Split by newlines
+							.map((line) => line.trim()) // Trim whitespace from each line
+							.filter((line) => line) // Remove empty lines
+							.map((line) =>
+								line.split("|").filter((value) => value)
+							); // Split by | and remove empty values
+
+						// Assign to the dictionary object
+						if (name) {
+							dictionary[name] = bcpDataArray;
+						}
 					}
-				});
 
-				props.handleArchiveFileData(dictionary);
-				// props.handleSortArchiveFileData();
+					props.handleArchiveFileData(dictionary);
+				} else {
+					const temp = props.archiveFile.fileBody.slice(
+						props.archiveFile.fileBody.indexOf("<MapData>"),
+						props.archiveFile.fileBody.indexOf("</MapData>") + 10
+					);
+					const parser = new XMLParser();
+					const result = parser.parse(temp);
+
+					const mapData = result.MapData?.Table || [];
+					const dictionary = {};
+
+					// Ensure mapData is treated as an array
+					const tables = Array.isArray(mapData) ? mapData : [mapData];
+
+					tables.forEach((table) => {
+						const tableName = table.Name;
+						const rows = table.row;
+
+						if (tableName && rows) {
+							// Ensure rows is an array
+							const rowArray = Array.isArray(rows)
+								? rows
+								: [rows];
+							dictionary[tableName] = rowArray.map((row) => {
+								// Ensure <c> values are treated as an array
+								return Array.isArray(row.c) ? row.c : [row.c];
+							});
+						}
+					});
+
+					props.handleArchiveFileData(dictionary);
+				}
 			} catch (error) {
 				console.error("Error parsing XML:", error);
 				toast.error("Error parsing XML");
 				props.handleArchiveFileData({});
 			}
-		} else {
-			setIsSelected(false);
 		}
 
 		const line = props.archiveFile.fileHeader.split("\n");
@@ -102,7 +140,6 @@ export default function Column(props) {
 			{/* <div className="column-display"> */}
 			<div className={`column-display ${isSelected ? "show" : ""}`}>
 				<TableColumnNames
-					isSelected={isSelected}
 					archiveFileData={props.archiveFileData}
 					handleTableSelection={props.handleTableSelection}
 				/>

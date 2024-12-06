@@ -314,8 +314,6 @@ export default function Data(props) {
 			});
 
 			setIsSelected(true);
-		} else {
-			setIsSelected(false);
 		}
 
 		if (props.mapperFiles.length > 0) {

@@ -38,6 +38,8 @@ function App() {
 	}
 
 	function handleArchiveFileData(item) {
+		console.log(item);
+
 		for (let key in item) {
 			// console.log(`${key}->${item[key]}`);
 			setArchiveFileData((prevValues) => {
