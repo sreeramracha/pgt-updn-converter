@@ -112,21 +112,6 @@ function App() {
 		});
 	}
 
-	function handleUpdateSelectedTable(indeces) {
-		if (indeces.length > 0) {
-			setSelectedTableName((prevData) => ({
-				...prevData,
-				tabledata: prevData.tableData.map((row) =>
-					row.map((value, index) =>
-						indeces.includes(index)
-							? convertEpochToCustomFormat(value)
-							: value
-					)
-				),
-			}));
-		}
-	}
-
 	return (
 		<>
 			<div className="App">
@@ -154,7 +139,6 @@ function App() {
 					archiveFileData={archiveFileData}
 					mapperFiles={mapperFiles}
 					selectedTableName={selectedTableName}
-					handleUpdateSelectedTable={handleUpdateSelectedTable}
 				/>
 			</div>
 
