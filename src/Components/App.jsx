@@ -25,6 +25,24 @@ function App() {
 		columns: "",
 	});
 
+	function convertEpochToCustomFormat(epoch) {
+		// Convert epoch to milliseconds (if it's in seconds)
+		const date = new Date(epoch * 1000);
+
+		// return date.toUTCString(); // Convert to UTC string
+
+		// Extract components
+		const year = date.getUTCFullYear();
+		const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are zero-based
+		const day = String(date.getUTCDate()).padStart(2, "0");
+		const hours = String(date.getUTCHours()).padStart(2, "0");
+		const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+		const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+
+		// Combine components into the desired format
+		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+	}
+
 	function handleClientMessageName(item) {
 		setClientMessageName(item.trim());
 	}
@@ -88,10 +106,25 @@ function App() {
 	function handleTableSelection(item) {
 		setSelectedTableName({
 			tableName: item.tableName,
-			tabledata: item.tableData,
+			tableData: item.tableData,
 			rows: item.rows,
 			columns: item.columns,
 		});
+	}
+
+	function handleUpdateSelectedTable(indeces) {
+		if (indeces.length > 0) {
+			setSelectedTableName((prevData) => ({
+				...prevData,
+				tabledata: prevData.tableData.map((row) =>
+					row.map((value, index) =>
+						indeces.includes(index)
+							? convertEpochToCustomFormat(value)
+							: value
+					)
+				),
+			}));
+		}
 	}
 
 	return (
@@ -121,6 +154,7 @@ function App() {
 					archiveFileData={archiveFileData}
 					mapperFiles={mapperFiles}
 					selectedTableName={selectedTableName}
+					handleUpdateSelectedTable={handleUpdateSelectedTable}
 				/>
 			</div>
 

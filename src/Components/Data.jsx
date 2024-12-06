@@ -13,6 +13,7 @@ export default function Data(props) {
 	const [isSelected, setIsSelected] = useState(false);
 	const [columnNames, setColumnNames] = useState([]);
 	const [isExceptionInterface, setIsExceptionInterface] = useState(false);
+	const [timeStampIndeces, setTimeStampIndeces] = useState([]);
 
 	const smartSellingImportData = "SmartSellingImportData.xml";
 	const smartSellingExportData = "SmartSellingExportData.xml";
@@ -341,6 +342,7 @@ export default function Data(props) {
 			);
 
 			const names = [];
+			const dateIndeces = [];
 
 			if (isExceptionInterface) {
 				maps.forEach((map) => {
@@ -368,6 +370,16 @@ export default function Data(props) {
 									if (nameTag) {
 										names.push(nameTag.textContent.trim());
 									}
+
+									const typeTag =
+										parameter.getElementsByTagName(
+											"Type"
+										)[0];
+									if (typeTag) {
+										dateIndeces.push(
+											typeTag.textContent.trim()
+										);
+									}
 								});
 							});
 						}
@@ -393,6 +405,14 @@ export default function Data(props) {
 								if (nameTag) {
 									names.push(nameTag.textContent.trim());
 								}
+
+								const typeTag =
+									column.getElementsByTagName("Type")[0];
+								if (typeTag) {
+									dateIndeces.push(
+										typeTag.textContent.trim()
+									);
+								}
 							});
 						}
 					});
@@ -400,8 +420,42 @@ export default function Data(props) {
 			}
 
 			setColumnNames(names);
+
+			if (!props.selectedTableName.tableData.includes("BCPTable")) {
+				const indeces = [];
+				dateIndeces.forEach((item, index) => {
+					if (
+						item.toLowerCase() === "timestamp".toLowerCase() ||
+						item.toLowerCase() === "date".toLowerCase()
+					) {
+						indeces.push(index);
+					}
+				});
+
+				console.log(indeces);
+
+				setTimeStampIndeces(indeces);
+			}
 		}
 	}, [props.selectedTableName]);
+
+	function convertEpochToCustomFormat(epoch) {
+		// Convert epoch to milliseconds (if it's in seconds)
+		const date = new Date(epoch * 1000);
+
+		// return date.toUTCString(); // Convert to UTC string
+
+		// Extract components
+		const year = date.getUTCFullYear();
+		const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are zero-based
+		const day = String(date.getUTCDate()).padStart(2, "0");
+		const hours = String(date.getUTCHours()).padStart(2, "0");
+		const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+		const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+
+		// Combine components into the desired format
+		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+	}
 
 	return (
 		<>
@@ -423,7 +477,13 @@ export default function Data(props) {
 							{filteredTable.tableData.map((row) => (
 								<tr key={row.join()}>
 									{row.map((cell, index) => (
-										<td key={index}>{cell}</td>
+										<td key={index}>
+											{timeStampIndeces.includes(index)
+												? convertEpochToCustomFormat(
+														cell
+												  )
+												: cell}
+										</td>
 									))}
 								</tr>
 							))}

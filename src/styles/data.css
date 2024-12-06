@@ -1,4 +1,5 @@
 .data {
+	box-shadow: 5px 10px 10px 10px rgb(214, 214, 214);
 	overflow: scroll;
 	opacity: 0;
 	transition: 0.5s ease;
