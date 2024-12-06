@@ -1,5 +1,12 @@
 .column-display {
 	display: flex;
+	/* margin: 0 2em; */
+	opacity: 0;
+	transition: 0.5s ease;
+}
+
+.column-display.show {
+	opacity: 1;
 	margin: 0 2em;
 }
 

@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/tablecolumnnames.css";
 
 export default function TableColumnNames(props) {
 	const [selectedIndex, setSelectedIndex] = useState();
+
 	const sortedData = [...props.archiveFileData].sort((a, b) =>
 		a.tableName.localeCompare(b.tableName)
 	);
 
 	function handleHighlightTableName(index) {
 		setSelectedIndex(index);
+
 		props.handleTableSelection(sortedData[index]);
 	}
+
+	useEffect(() => {
+		setSelectedIndex(null);
+	}, [props.archiveFileData]);
 
 	return (
 		<>

@@ -12,6 +12,7 @@ export default function Data(props) {
 	});
 	const [isSelected, setIsSelected] = useState(false);
 	const [columnNames, setColumnNames] = useState([]);
+	const [isExceptionInterface, setIsExceptionInterface] = useState(false);
 
 	const smartSellingImportData = "SmartSellingImportData.xml";
 	const smartSellingExportData = "SmartSellingExportData.xml";
@@ -292,6 +293,8 @@ export default function Data(props) {
 		) {
 			setFilePath("SmartSellingExportSpreadSheet.xml");
 		}
+
+		setIsSelected(false);
 	}, [props.archiveFile, props.clientMessageName]);
 
 	useEffect(() => {
@@ -316,9 +319,17 @@ export default function Data(props) {
 		}
 
 		if (props.mapperFiles.length > 0) {
+			setColumnNames([]);
 			const filteredMapperFile = props.mapperFiles.filter((item) => {
 				return item.fileName === filePath;
 			});
+
+			const exceptionInterface = [
+				"ImportData.xml",
+				"SmartSellingImportData.xml",
+			];
+
+			setIsExceptionInterface(exceptionInterface.includes(filePath));
 
 			const parser = new DOMParser();
 			const xmlDoc = parser.parseFromString(
@@ -332,26 +343,63 @@ export default function Data(props) {
 			);
 
 			const names = [];
-			maps.forEach((map) => {
-				const tables = map.getElementsByTagName("Table");
-				Array.from(tables).forEach((table) => {
-					const tableNameTag = table.getElementsByTagName("Name")[0];
-					const tableNameTagValue = tableNameTag.textContent.trim();
-					if (
-						tableNameTagValue.toLowerCase() ===
-						props.selectedTableName.tableName.toLowerCase()
-					) {
-						const columns = table.getElementsByTagName("Column");
-						Array.from(columns).forEach((column) => {
-							const nameTag =
-								column.getElementsByTagName("Name")[0];
-							if (nameTag) {
-								names.push(nameTag.textContent.trim());
-							}
-						});
-					}
+
+			if (isExceptionInterface) {
+				maps.forEach((map) => {
+					const tables = map.getElementsByTagName("Table");
+					Array.from(tables).forEach((table) => {
+						const tableNameTag =
+							table.getElementsByTagName("Name")[0];
+						const tableNameTagValue =
+							tableNameTag.textContent.trim();
+						if (
+							tableNameTagValue.toLowerCase() ===
+							props.selectedTableName.tableName.toLowerCase()
+						) {
+							const columns =
+								table.getElementsByTagName("StoredProcedure");
+							Array.from(columns).forEach((column) => {
+								const parameters =
+									column.getElementsByTagName("Parameter");
+
+								Array.from(parameters).forEach((parameter) => {
+									const nameTag =
+										parameter.getElementsByTagName(
+											"Name"
+										)[0];
+									if (nameTag) {
+										names.push(nameTag.textContent.trim());
+									}
+								});
+							});
+						}
+					});
 				});
-			});
+			} else {
+				maps.forEach((map) => {
+					const tables = map.getElementsByTagName("Table");
+					Array.from(tables).forEach((table) => {
+						const tableNameTag =
+							table.getElementsByTagName("Name")[0];
+						const tableNameTagValue =
+							tableNameTag.textContent.trim();
+						if (
+							tableNameTagValue.toLowerCase() ===
+							props.selectedTableName.tableName.toLowerCase()
+						) {
+							const columns =
+								table.getElementsByTagName("Column");
+							Array.from(columns).forEach((column) => {
+								const nameTag =
+									column.getElementsByTagName("Name")[0];
+								if (nameTag) {
+									names.push(nameTag.textContent.trim());
+								}
+							});
+						}
+					});
+				});
+			}
 
 			setColumnNames(names);
 		}
@@ -359,15 +407,18 @@ export default function Data(props) {
 
 	return (
 		<>
-			<div className="data">
+			{/* <div className="data"> */}
+			<div className={`data ${isSelected ? "show" : ""}`}>
 				<table>
-					<thead>
-						<tr>
-							{columnNames.map((item) => (
-								<th>{item}</th>
-							))}
-						</tr>
-					</thead>
+					{isSelected && (
+						<thead>
+							<tr>
+								{columnNames.map((item) => (
+									<th>{item}</th>
+								))}
+							</tr>
+						</thead>
+					)}
 
 					{isSelected && (
 						<tbody>

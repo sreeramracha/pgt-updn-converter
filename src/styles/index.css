@@ -19,3 +19,8 @@ code {
 textarea {
 	width: max-content;
 }
+/* 
+* {
+	transition-timing-function: ease-in;
+	transition-duration: 0.5s;
+} */

@@ -7,6 +7,7 @@ import TableColumnNames from "./TableColumnNames";
 
 export default function Column(props) {
 	const [xmlHeader, setXmlHeader] = useState([]);
+	const [isSelected, setIsSelected] = useState(false);
 
 	useEffect(() => {
 		setXmlHeader([]);
@@ -33,6 +34,8 @@ export default function Column(props) {
 		}
 
 		if (props.archiveFile.fileBody.length > 0) {
+			setIsSelected(false);
+			setIsSelected(true);
 			// const parser = new XMLParser();
 			// const result = parser.parse(props.archiveFile.fileBody);
 			// setVersion(result.Envelope.Body.ExportData.Version);
@@ -84,6 +87,8 @@ export default function Column(props) {
 				toast.error("Error parsing XML");
 				props.handleArchiveFileData({});
 			}
+		} else {
+			setIsSelected(false);
 		}
 
 		const line = props.archiveFile.fileHeader.split("\n");
@@ -94,8 +99,10 @@ export default function Column(props) {
 
 	return (
 		<>
-			<div className="column-display">
+			{/* <div className="column-display"> */}
+			<div className={`column-display ${isSelected ? "show" : ""}`}>
 				<TableColumnNames
+					isSelected={isSelected}
 					archiveFileData={props.archiveFileData}
 					handleTableSelection={props.handleTableSelection}
 				/>

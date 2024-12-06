@@ -1,7 +1,12 @@
 .data {
-	margin: 2em;
 	overflow: scroll;
-	/* width: 110em; */
+	opacity: 0;
+	transition: 0.5s ease;
+}
+
+.data.show {
+	opacity: 1;
+	margin: 2em 3em;
 }
 
 .data > table {
