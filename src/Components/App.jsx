@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Input from "./Input";
 import "../styles/mapperfiles.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -18,6 +18,12 @@ function App() {
 	const [version, setVersion] = useState("");
 	const [clientMessageName, setClientMessageName] = useState("");
 	const [archiveFileData, setArchiveFileData] = useState([]);
+	const [selectedTableName, setSelectedTableName] = useState({
+		tableName: "",
+		tableData: "",
+		rows: "",
+		columns: "",
+	});
 
 	function handleClientMessageName(item) {
 		setClientMessageName(item.trim());
@@ -77,6 +83,15 @@ function App() {
 		toast.success("Mapper Files loaded successfully");
 	}
 
+	function handleTableSelection(item) {
+		setSelectedTableName({
+			tableName: item.tableName,
+			tabledata: item.tableData,
+			rows: item.rows,
+			columns: item.columns,
+		});
+	}
+
 	return (
 		<>
 			<div className="App">
@@ -95,6 +110,7 @@ function App() {
 					handleArchiveFileData={handleArchiveFileData}
 					handleClientMessageName={handleClientMessageName}
 					handleVersion={handleVersion}
+					handleTableSelection={handleTableSelection}
 				/>
 				<Data
 					archiveFile={archiveFile}
@@ -102,6 +118,7 @@ function App() {
 					clientMessageName={clientMessageName}
 					archiveFileData={archiveFileData}
 					mapperFiles={mapperFiles}
+					selectedTableName={selectedTableName}
 				/>
 			</div>
 

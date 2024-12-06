@@ -3,7 +3,15 @@ import { toast } from "react-toastify";
 import "../styles/data.css";
 
 export default function Data(props) {
-	const [filePath, setFilePath] = useState();
+	const [filePath, setFilePath] = useState("");
+	const [filteredTable, setFilteredTable] = useState({
+		tableName: "",
+		tableData: "",
+		rows: "",
+		columns: "",
+	});
+	const [isSelected, setIsSelected] = useState(false);
+	const [columnNames, setColumnNames] = useState([]);
 
 	const smartSellingImportData = "SmartSellingImportData.xml";
 	const smartSellingExportData = "SmartSellingExportData.xml";
@@ -284,7 +292,70 @@ export default function Data(props) {
 		) {
 			setFilePath("SmartSellingExportSpreadSheet.xml");
 		}
-	}, [props.archiveFile]);
+	}, [props.archiveFile, props.clientMessageName]);
+
+	useEffect(() => {
+		if (
+			props.archiveFileData.length > 0 &&
+			props.selectedTableName.tableName.length > 0
+		) {
+			const temp = props.archiveFileData.filter((item) => {
+				return item.tableName === props.selectedTableName.tableName;
+			});
+
+			setFilteredTable({
+				tableName: temp[0].tableName,
+				tableData: temp[0].tableData,
+				rows: temp[0].rows,
+				columns: temp[0].columns,
+			});
+
+			setIsSelected(true);
+		} else {
+			setIsSelected(false);
+		}
+
+		if (props.mapperFiles.length > 0) {
+			const filteredMapperFile = props.mapperFiles.filter((item) => {
+				return item.fileName === filePath;
+			});
+
+			const parser = new DOMParser();
+			const xmlDoc = parser.parseFromString(
+				filteredMapperFile[0].fileContent,
+				"text/xml"
+			);
+
+			// Find all <Map> elements with the matching version
+			const maps = xmlDoc.querySelectorAll(
+				`Map[version="${props.version}"]`
+			);
+
+			const names = [];
+			maps.forEach((map) => {
+				const tables = map.getElementsByTagName("Table");
+				Array.from(tables).forEach((table) => {
+					const tableNameTag = table.getElementsByTagName("Name")[0];
+					const tableNameTagValue = tableNameTag.textContent.trim();
+					if (
+						tableNameTagValue.toLowerCase() ===
+						props.selectedTableName.tableName.toLowerCase()
+					) {
+						const columns = table.getElementsByTagName("Column");
+						Array.from(columns).forEach((column) => {
+							const nameTag =
+								column.getElementsByTagName("Name")[0];
+							if (nameTag) {
+								names.push(nameTag.textContent.trim());
+							}
+						});
+					}
+				});
+			});
+
+			setColumnNames(names);
+		}
+	}, [props.selectedTableName]);
 
 	return (
 		<>
@@ -292,20 +363,23 @@ export default function Data(props) {
 				<table>
 					<thead>
 						<tr>
-							{props.archiveFileData.map((item) => (
-								<th>{item.tableName}</th>
+							{columnNames.map((item) => (
+								<th>{item}</th>
 							))}
 						</tr>
 					</thead>
-					<tbody>
-						{props.archiveFileData.map((item) => (
-							<tr>
-								{item.tableData.map((x) =>
-									x.map((y) => <td>{y}</td>)
-								)}
-							</tr>
-						))}
-					</tbody>
+
+					{isSelected && (
+						<tbody>
+							{filteredTable.tableData.map((row) => (
+								<tr key={row.join()}>
+									{row.map((cell, index) => (
+										<td key={index}>{cell}</td>
+									))}
+								</tr>
+							))}
+						</tbody>
+					)}
 				</table>
 			</div>
 		</>

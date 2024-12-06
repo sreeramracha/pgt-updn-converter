@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Table from "./Table";
 import "../styles/column.css";
 import TableColumnNames from "./TableColumnNames";
 
@@ -51,11 +50,14 @@ export default function Column(props) {
 			}
 
 			try {
+				const temp = props.archiveFile.fileBody.slice(
+					props.archiveFile.fileBody.indexOf("<MapData>"),
+					props.archiveFile.fileBody.indexOf("</MapData>") + 10
+				);
 				const parser = new XMLParser();
-				const result = parser.parse(props.archiveFile.fileBody);
+				const result = parser.parse(temp);
 
-				const mapData =
-					result.Envelope?.Body?.ImportData?.MapData?.Table || [];
+				const mapData = result.MapData?.Table || [];
 				const dictionary = {};
 
 				// Ensure mapData is treated as an array
@@ -93,7 +95,10 @@ export default function Column(props) {
 	return (
 		<>
 			<div className="column-display">
-				<TableColumnNames archiveFileData={props.archiveFileData} />
+				<TableColumnNames
+					archiveFileData={props.archiveFileData}
+					handleTableSelection={props.handleTableSelection}
+				/>
 
 				<div className="column-header-data">
 					{xmlHeader.map((item) => (
