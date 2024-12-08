@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../styles/tablecolumnnames.css";
 
 export default function TableColumnNames(props) {
-	const [selectedIndex, setSelectedIndex] = useState();
+	const [selectedIndex, setSelectedIndex] = useState(null);
 
 	const sortedData = [...props.archiveFileData].sort((a, b) =>
 		a.tableName.localeCompare(b.tableName)

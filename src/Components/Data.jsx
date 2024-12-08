@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "../styles/data.css";
+import { FaLongArrowAltDown } from "react-icons/fa";
+import { FaLongArrowAltUp } from "react-icons/fa";
 
 export default function Data(props) {
 	const [filePath, setFilePath] = useState("");
@@ -14,6 +16,9 @@ export default function Data(props) {
 	const [columnNames, setColumnNames] = useState([]);
 	const [isExceptionInterface, setIsExceptionInterface] = useState(false);
 	const [timeStampIndeces, setTimeStampIndeces] = useState([]);
+	const [isAscending, setIsAscending] = useState(false);
+	const [isDescending, setIsDescending] = useState(false);
+	const [selectedTableIndex, setSelectedTableIndex] = useState(null);
 
 	const smartSellingImportData = "SmartSellingImportData.xml";
 	const smartSellingExportData = "SmartSellingExportData.xml";
@@ -437,6 +442,9 @@ export default function Data(props) {
 				setTimeStampIndeces(indeces);
 			}
 		}
+
+		setIsAscending(false);
+		setIsDescending(false);
 	}, [props.selectedTableName]);
 
 	function convertEpochToCustomFormat(epoch) {
@@ -457,6 +465,44 @@ export default function Data(props) {
 		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 	}
 
+	function handleSorting(index) {
+		setSelectedTableIndex(index);
+		if (isAscending === isDescending) {
+			setIsAscending(true);
+			setIsDescending(false);
+		} else {
+			setIsAscending(!isAscending);
+			setIsDescending(!isDescending);
+		}
+
+		setFilteredTable((prev) => {
+			const sortedData = [...prev.tableData].sort((a, b) => {
+				const valueA = a[index];
+				const valueB = b[index];
+
+				if (isAscending) {
+					// Check if both values are numbers
+					if (!isNaN(valueA) && !isNaN(valueB)) {
+						return parseFloat(valueA) - parseFloat(valueB); // Numerical comparison
+					}
+
+					// Otherwise, use string comparison
+					return valueA.toString().localeCompare(valueB.toString());
+				} else {
+					// Check if both values are numbers
+					if (!isNaN(valueA) && !isNaN(valueB)) {
+						return parseFloat(valueB) - parseFloat(valueA); // Numerical comparison
+					}
+
+					// Otherwise, use string comparison
+					return valueB.toString().localeCompare(valueA.toString());
+				}
+			});
+
+			return { ...prev, tableData: sortedData };
+		});
+	}
+
 	return (
 		<>
 			{/* <div className="data"> */}
@@ -465,8 +511,27 @@ export default function Data(props) {
 					{isSelected && (
 						<thead>
 							<tr>
-								{columnNames.map((item) => (
-									<th>{item}</th>
+								{columnNames.map((item, index) => (
+									<th
+										key={index}
+										onClick={() => {
+											handleSorting(index);
+										}}
+									>
+										{item}
+										{index === selectedTableIndex &&
+										isAscending ? (
+											<FaLongArrowAltUp />
+										) : (
+											""
+										)}
+										{index === selectedTableIndex &&
+										isDescending ? (
+											<FaLongArrowAltDown />
+										) : (
+											""
+										)}
+									</th>
 								))}
 							</tr>
 						</thead>

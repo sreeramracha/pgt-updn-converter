@@ -14,11 +14,15 @@
 	width: 100%;
 	border-collapse: collapse;
 }
-
-.data > table > thead > th,
-.data > table > tbody td {
+/* 
+.data > table > thead > tr > th,
+.data > table > tbody > tr > td {
 	border: 1px solid;
 	width: 5em;
 	height: 1em;
 	overflow: hidden;
+} */
+
+.data > table > thead > tr > th {
+	cursor: pointer;
 }
