@@ -19,6 +19,8 @@ export default function Data(props) {
 	const [isAscending, setIsAscending] = useState(false);
 	const [isDescending, setIsDescending] = useState(false);
 	const [selectedTableIndex, setSelectedTableIndex] = useState(null);
+	const [selectedRows, setSelectedRows] = useState([]); // Store indices of selected rows
+	const [lastClickedRow, setLastClickedRow] = useState(null); // Track the last clicked row for shift selection
 
 	const smartSellingImportData = "SmartSellingImportData.xml";
 	const smartSellingExportData = "SmartSellingExportData.xml";
@@ -445,6 +447,8 @@ export default function Data(props) {
 
 		setIsAscending(false);
 		setIsDescending(false);
+		setSelectedRows([]);
+		setLastClickedRow(null);
 	}, [props.selectedTableName]);
 
 	function convertEpochToCustomFormat(epoch) {
@@ -483,24 +487,56 @@ export default function Data(props) {
 				if (isAscending) {
 					// Check if both values are numbers
 					if (!isNaN(valueA) && !isNaN(valueB)) {
-						return parseFloat(valueA) - parseFloat(valueB); // Numerical comparison
-					}
-
-					// Otherwise, use string comparison
-					return valueA.toString().localeCompare(valueB.toString());
-				} else {
-					// Check if both values are numbers
-					if (!isNaN(valueA) && !isNaN(valueB)) {
 						return parseFloat(valueB) - parseFloat(valueA); // Numerical comparison
 					}
 
 					// Otherwise, use string comparison
 					return valueB.toString().localeCompare(valueA.toString());
+				} else {
+					// Check if both values are numbers
+					if (!isNaN(valueA) && !isNaN(valueB)) {
+						return parseFloat(valueA) - parseFloat(valueB); // Numerical comparison
+					}
+
+					// Otherwise, use string comparison
+					return valueA.toString().localeCompare(valueB.toString());
 				}
 			});
 
 			return { ...prev, tableData: sortedData };
 		});
+	}
+
+	function handleCellClick(index, column, event) {
+		if (column !== 0) return; // Only highlight if clicked in the first column
+
+		if (event.ctrlKey || event.metaKey) {
+			// Ctrl/Command click: Toggle selection
+			setSelectedRows(
+				(prevSelected) =>
+					prevSelected.includes(index)
+						? prevSelected.filter((i) => i !== index) // Deselect if already selected
+						: [...prevSelected, index] // Add to selection
+			);
+		} else if (event.shiftKey && lastClickedRow !== null) {
+			// Shift click: Select range
+			const start = Math.min(lastClickedRow, index);
+			const end = Math.max(lastClickedRow, index);
+			const range = Array.from(
+				{ length: end - start + 1 },
+				(_, i) => start + i
+			);
+			setSelectedRows((prevSelected) => [
+				...new Set([...prevSelected, ...range]),
+			]);
+		} else {
+			// Single click: Select only this row
+			setSelectedRows([index]);
+		}
+		setLastClickedRow(index); // Update last clicked row
+
+		console.log(selectedRows);
+		console.log(lastClickedRow);
 	}
 
 	return (
@@ -511,6 +547,7 @@ export default function Data(props) {
 					{isSelected && (
 						<thead>
 							<tr>
+								<th></th>
 								{columnNames.map((item, index) => (
 									<th
 										key={index}
@@ -521,13 +558,13 @@ export default function Data(props) {
 										{item}
 										{index === selectedTableIndex &&
 										isAscending ? (
-											<FaLongArrowAltUp />
+											<FaLongArrowAltDown />
 										) : (
 											""
 										)}
 										{index === selectedTableIndex &&
 										isDescending ? (
-											<FaLongArrowAltDown />
+											<FaLongArrowAltUp />
 										) : (
 											""
 										)}
@@ -539,14 +576,33 @@ export default function Data(props) {
 
 					{isSelected && (
 						<tbody>
-							{filteredTable.tableData.map((row) => (
-								<tr key={row.join()}>
+							{filteredTable.tableData.map((row, index) => (
+								<tr
+									key={row.join()}
+									style={{
+										backgroundColor: selectedRows.includes(
+											index
+										)
+											? "#d3f9d8"
+											: "white", // Highlight selected rows
+									}}
+								>
+									<td
+										onClick={(event) =>
+											handleCellClick(index, 0, event)
+										} // Only respond to first column clicks
+										style={{ cursor: "pointer" }}
+									>
+										{index + 1}
+									</td>
 									{row.map((cell, index) => (
 										<td key={index}>
 											{timeStampIndeces.includes(index)
-												? convertEpochToCustomFormat(
-														cell
-												  )
+												? cell.toString().includes(":")
+													? cell
+													: convertEpochToCustomFormat(
+															cell
+													  )
 												: cell}
 										</td>
 									))}

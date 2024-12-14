@@ -1,3 +1,8 @@
+:root {
+	--stickyBackground: #f5f5f5;
+	--borderColor: #c9d1dc;
+}
+
 .data {
 	box-shadow: 5px 10px 10px 10px rgb(214, 214, 214);
 	overflow: scroll;
@@ -8,6 +13,7 @@
 .data.show {
 	opacity: 1;
 	margin: 2em 3em;
+	height: 30em;
 }
 
 .data > table {
@@ -25,4 +31,39 @@
 
 .data > table > thead > tr > th {
 	cursor: pointer;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: var(--stickyBackground);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.data > table > thead > tr > th:nth-child(1) {
+	width: 1em;
+}
+
+.data > table > thead > tr > th:nth-child(1),
+.data > table > tbody > tr > td:nth-child(1) {
+	position: sticky;
+	left: 0;
+	background: var(--stickyBackground);
+	box-shadow: 6px 2px 0px rgba(0, 0, 0, 0.25);
+}
+
+.data > table > thead > tr > th:nth-child(1)::before,
+.data > table > tbody > tr > td:nth-child(1)::before {
+	background: linear-gradient(
+		90deg,
+		rgba(0, 0, 0, 0) 0%,
+		rgba(0, 0, 0, 0.08) 100%
+	);
+}
+
+.data > table > thead > tr > th:nth-child(1)::after,
+.data > table > tbody > tr > td:nth-child(1)::after {
+	background: linear-gradient(
+		90deg,
+		rgba(0, 0, 0, 0.08) 0%,
+		rgba(0, 0, 0, 0) 100%
+	);
 }
